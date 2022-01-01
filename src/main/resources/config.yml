@@ -1,0 +1,14 @@
+features:
+  combattag:
+    # how long a player is tagged, in seconds
+    length: 15
+    # message to send when someone enters combat
+    enter-msg: " &b&l(!) &7You are now in combat! Do not log out!"
+    # message to send when someone exits combat
+    exit-msg: " &b&l(!) &7No longer in combat. &aYou may now log out."
+    # what to broadcast when a player combat logs
+    # variables: [PLAYER] = player who combat logged
+    combatlog-broadcast: "&b[PLAYER] &7has combat logged."
+    # list of players who bypass being killed from combat
+    bypass:
+      - "CyberRyan"
