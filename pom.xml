@@ -61,6 +61,14 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>CyberCore</id>
+            <url>https://raw.github.com/CyberRyan1/CyberCoreRepo/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -69,6 +77,17 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cyberryan1</groupId>
+            <artifactId>CyberCore</artifactId>
+            <version>1.0.4</version>
         </dependency>
     </dependencies>
 </project>
