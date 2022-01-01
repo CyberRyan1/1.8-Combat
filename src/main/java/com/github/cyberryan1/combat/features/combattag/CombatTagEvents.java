@@ -31,32 +31,10 @@ public class CombatTagEvents implements Listener {
     public static List<String> combatLogBypass = new ArrayList<>();
 
     //                     Player in combat
-    //                                       List of all blocks that are faked to the player. Should be the ORIGINAL block
-    private static HashMap<Player, List<Block>> fakeBlocks = new HashMap<>();
-    //                     Player in combat
     //                                  List of all other players they have tagged
     private static HashMap<Player, List<Player>> tagsToPlayers = new HashMap<>();
-    private static Location cornerOne;
-    private static Location sharedCorner;
-    private static Location cornerTwo;
-    private static final World WORLD = Bukkit.getWorld( YMLUtils.getConfig().getStr( "features.combattag.redblocks.world" ) );
 
     public CombatTagEvents() {
-        double x = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.one.x" );
-        double y = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.one.y" );
-        double z = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.one.z" );
-        cornerOne = new Location( WORLD, x, y, z );
-
-        x = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.two.x" );
-        y = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.two.y" );
-        z = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.two.z" );
-        sharedCorner = new Location( WORLD, x, y, z );
-
-        x = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.three.x" );
-        y = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.three.y" );
-        z = YMLUtils.getConfig().getDouble( "features.combattag.redblocks.three.z" );
-        cornerTwo = new Location( WORLD, x, y, z );
-
         Collections.addAll( combatLogBypass, YMLUtils.getConfig().getStrList( "features.combattag.bypass" ) );
     }
 
