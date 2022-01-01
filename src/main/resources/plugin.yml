@@ -1,0 +1,3 @@
+name: 1-8-Combat
+version: '${project.version}'
+main: com.github.cyberryan1.combat.Combat
