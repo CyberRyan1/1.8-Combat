@@ -2,9 +2,11 @@ package com.github.cyberryan1.combat.features;
 
 import com.github.cyberryan1.cybercore.utils.CoreUtils;
 import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseCommand implements CommandExecutor, TabCompleter {
@@ -27,6 +29,26 @@ public abstract class BaseCommand implements CommandExecutor, TabCompleter {
 
         sender.sendMessage( CoreUtils.getColored( "&cYou must be console to run this command!" ) );
         return false;
+    }
+
+    // returns all online player names
+    public static List<String> getAllOnlinePlayerNames() {
+        List<String> toReturn = new ArrayList<>();
+        for ( Player p : Bukkit.getOnlinePlayers() ) {
+            toReturn.add( p.getName() );
+        }
+        return toReturn;
+    }
+
+    // returns all online player names that start with the provided argument
+    public static List<String> matchOnlinePlayers( String input ) {
+        List<String> toReturn = new ArrayList<>();
+        for ( Player p : Bukkit.getOnlinePlayers() ) {
+            if ( p.getName().toUpperCase().startsWith( input.toUpperCase() ) ) {
+                toReturn.add( p.getName() );
+            }
+        }
+        return toReturn.size() == 0 ? null : toReturn;
     }
 
     protected String label;
