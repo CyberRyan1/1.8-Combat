@@ -3,11 +3,14 @@ package com.github.cyberryan1.combat.features.combattag;
 import com.github.cyberryan1.combat.utils.Utils;
 import com.github.cyberryan1.combat.utils.yml.YMLUtils;
 import com.github.cyberryan1.cybercore.CyberCore;
-import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -38,54 +41,13 @@ public class CombatTagEvents implements Listener {
     @EventHandler
     public void onEntityDamageByEntityEvent( EntityDamageByEntityEvent event ) {
         if ( event.getEntity() instanceof Player && event.getDamager() instanceof Player ) {
-            Player attacker = ( Player ) event.getDamager();
-            Player victim = ( Player ) event.getEntity();
+            enterIntoCombat( ( Player ) event.getDamager(), ( Player ) event.getEntity() );
+        }
 
-            if ( Utils.getRegions( attacker.getLocation() ).stream()
-                    .anyMatch( ( r1 ) -> (
-                                    r1.getFlag( Flags.PVP ) == StateFlag.State.DENY
-                            )
-                    )
-                    || Utils.getRegions( victim.getLocation() ).stream()
-                    .anyMatch( ( r1 ) -> (
-                                    r1.getFlag( Flags.PVP ) == StateFlag.State.DENY
-                            )
-                    )
-            ) { return; }
-
-            long timestamp = System.currentTimeMillis() / 1000; // gets the timestamp in seconds instead of milliseconds
-
-            if ( attacker.getGameMode() == GameMode.CREATIVE ) { return; }
-            if ( attacker != null && tags.containsKey( attacker ) == false ) {
-                tags.put( attacker, timestamp );
-                doCombatTimer( attacker );
-                attacker.sendMessage( YMLUtils.getConfig().getColoredStr( "features.combattag.enter-msg" ) );
-
-                List<Player> list = new ArrayList<>();
-                list.add( victim );
-                tagsToPlayers.put( attacker, list );
-            }
-            else if ( attacker != null ) {
-                tags.put( attacker, timestamp );
-                if ( tagsToPlayers.get( attacker ).contains( victim ) == false ) {
-                    tagsToPlayers.get( attacker ).add( victim );
-                }
-            }
-
-            if ( victim != null && tags.containsKey( victim ) == false ) {
-                tags.put( victim, timestamp );
-                doCombatTimer( victim );
-                victim.sendMessage( YMLUtils.getConfig().getColoredStr( "features.combattag.enter-msg" ) );
-
-                List<Player> list = new ArrayList<>();
-                list.add( attacker );
-                tagsToPlayers.put( victim, list );
-            }
-            else if ( victim != null ){
-                tags.put( victim, timestamp );
-                if ( tagsToPlayers.get( victim ).contains( attacker ) == false ) {
-                    tagsToPlayers.get( victim ).add( attacker );
-                }
+        else if ( event.getEntity() instanceof Player && event.getDamager() instanceof Projectile ) {
+            Projectile proj = ( Projectile ) event.getDamager();
+            if ( proj.getShooter() instanceof Player ) {
+                enterIntoCombat( ( Player ) proj.getShooter(), ( Player ) event.getEntity() );
             }
         }
     }
@@ -112,6 +74,52 @@ public class CombatTagEvents implements Listener {
             Player victim = event.getEntity();
             for ( Player otherPlayer : tagsToPlayers.keySet() ) {
                 tagsToPlayers.get( otherPlayer ).remove( victim );
+            }
+        }
+    }
+
+    private void enterIntoCombat( Player attacker, Player victim ) {
+
+        RegionQuery query = Utils.getWorldGuard().getRegionContainer().createQuery();
+        ApplicableRegionSet attackerSet = query.getApplicableRegions( attacker.getLocation() );
+        ApplicableRegionSet victimSet = query.getApplicableRegions( victim.getLocation() );
+        LocalPlayer localAttacker = Utils.getWorldGuard().wrapPlayer( attacker );
+        LocalPlayer localVictim = Utils.getWorldGuard().wrapPlayer( victim );
+        if ( attackerSet.testState( localAttacker, DefaultFlag.PVP ) == false || victimSet.testState( localVictim, DefaultFlag.PVP ) == false ) {
+            return;
+        }
+
+        long timestamp = System.currentTimeMillis() / 1000; // gets the timestamp in seconds instead of milliseconds
+        if ( attacker.getGameMode() == GameMode.CREATIVE ) { return; }
+        if ( attacker != null && tags.containsKey( attacker ) == false ) {
+            tags.put( attacker, timestamp );
+            doCombatTimer( attacker );
+            attacker.sendMessage( YMLUtils.getConfig().getColoredStr( "features.combattag.enter-msg" ) );
+
+            List<Player> list = new ArrayList<>();
+            list.add( victim );
+            tagsToPlayers.put( attacker, list );
+        }
+        else if ( attacker != null ) {
+            tags.put( attacker, timestamp );
+            if ( tagsToPlayers.get( attacker ).contains( victim ) == false ) {
+                tagsToPlayers.get( attacker ).add( victim );
+            }
+        }
+
+        if ( victim != null && tags.containsKey( victim ) == false ) {
+            tags.put( victim, timestamp );
+            doCombatTimer( victim );
+            victim.sendMessage( YMLUtils.getConfig().getColoredStr( "features.combattag.enter-msg" ) );
+
+            List<Player> list = new ArrayList<>();
+            list.add( attacker );
+            tagsToPlayers.put( victim, list );
+        }
+        else if ( victim != null ){
+            tags.put( victim, timestamp );
+            if ( tagsToPlayers.get( victim ).contains( attacker ) == false ) {
+                tagsToPlayers.get( victim ).add( attacker );
             }
         }
     }
