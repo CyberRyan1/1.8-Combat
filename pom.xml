@@ -69,6 +69,10 @@
             <id>CyberCore</id>
             <url>https://raw.github.com/CyberRyan1/CyberCoreRepo/mvn-repo/</url>
         </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -88,6 +92,12 @@
             <groupId>com.github.cyberryan1</groupId>
             <artifactId>CyberCore</artifactId>
             <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>7.0.6</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
