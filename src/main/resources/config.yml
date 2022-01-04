@@ -12,3 +12,26 @@ features:
     # list of players who bypass being killed from combat
     bypass:
       - "CyberRyan"
+    # list of commands that can't be done while in combat
+    prevented-commands:
+      - "/clan home"
+      - "/clan sethome"
+      - "/home"
+      - "/tpa"
+      - "/rtp"
+      - "/sethome"
+
+commands:
+  spawn:
+    # spawn location
+    location:
+      x: 44.5
+      y: 71.2
+      z: -74.5
+      pitch: 1
+      yaw: 90
+      world: "world"
+    # how much time it takes to go to spawn
+    delay: 5
+    # command to spawn other players instantly
+    spawn-others: "server.srmod"

@@ -3,6 +3,7 @@ package com.github.cyberryan1.combat.features.combattag;
 import com.github.cyberryan1.combat.utils.Utils;
 import com.github.cyberryan1.combat.utils.yml.YMLUtils;
 import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -15,12 +16,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CombatTagEvents implements Listener {
 
@@ -74,6 +73,20 @@ public class CombatTagEvents implements Listener {
             Player victim = event.getEntity();
             for ( Player otherPlayer : tagsToPlayers.keySet() ) {
                 tagsToPlayers.get( otherPlayer ).remove( victim );
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCommand( PlayerCommandPreprocessEvent event ) {
+        if ( tags.containsKey( event.getPlayer() ) ) {
+            String[] blockedCommands = YMLUtils.getConfig().getStrList( "features.combattag.prevented-commands" );
+            for ( String cmd : blockedCommands ) {
+                if ( event.getMessage().startsWith( cmd ) ) {
+                    event.getPlayer().sendMessage( CoreUtils.getColored( "&7You cannot run this command while in combat!" ) );
+                    event.setCancelled( true );
+                    return;
+                }
             }
         }
     }
