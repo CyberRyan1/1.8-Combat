@@ -79,7 +79,27 @@ public class SpawnCommand extends BaseCommand {
         }
 
         else if ( VaultUtils.hasPerms( sender, SPAWN_OTHERS_PERM ) ) {
+            if ( args.length >= 1 ) {
+                if ( CoreUtils.isValidUsername( args[0] ) ) {
+                    Player target = Bukkit.getPlayer( args[0] );
+                    if ( target != null ) {
+                        sender.sendMessage( CoreUtils.getColored( "&7You have sent &c" + target.getName() + "&7 to spawn" ) );
+                        target.teleport( SPAWN_LOC );
+                    }
 
+                    else {
+                        sender.sendMessage( CoreUtils.getColored( "&7Player with the username &c\"" + args[0] + "&c\"&7 was not found!" ) );
+                    }
+                }
+
+                else {
+                    sender.sendMessage( CoreUtils.getColored( "&7Player with the username &c\"" + args[0] + "&c\"&7 was not found!" ) );
+                }
+            }
+
+            else {
+                sender.sendMessage( CoreUtils.getColored( "&8/&7spawn &c[player]" ) );
+            }
         }
 
         else {
